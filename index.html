@@ -1191,7 +1191,35 @@
       personaje.castShadow = true;
       personaje.receiveShadow = true;
       scene.add(personaje);
+let stars;
+let time = 0;
 
+function crearEstrellasParpadeantes() {
+  const geometry = new THREE.BufferGeometry();
+  const vertices = [];
+  const scales = []; // Para animación
+  
+  for (let i = 0; i < 8000; i++) {
+    const x = (Math.random() - 0.5) * 2000;
+    const y = (Math.random() - 0.5) * 2000;
+    const z = (Math.random() - 0.5) * 2000;
+    
+    vertices.push(x, y, z);
+    scales.push(Math.random()); // Escala inicial aleatoria
+  }
+  
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  geometry.setAttribute('scale', new THREE.Float32BufferAttribute(scales, 1));
+  
+  const material = new THREE.PointsMaterial({
+    color: 0xFFFFFF,
+    size: 1.5,
+    transparent: true
+  });
+  
+  stars = new THREE.Points(geometry, material);
+  scene.add(stars);
+}
       // Cargar mesón
       // Cargar mesón
       // Cargar mesón
@@ -1807,6 +1835,20 @@
 function animar() {
   requestAnimationFrame(animar);
   moverPersonaje();
+
+    time += 0.01;
+  
+  if (stars) {
+    const scales = stars.geometry.attributes.scale.array;
+    
+    for (let i = 0; i < scales.length; i++) {
+      // Parpadeo aleatorio usando función de ruido o seno
+      scales[i] = 0.5 + Math.abs(Math.sin(time + i * 0.1)) * 1.5;
+    }
+    
+    stars.geometry.attributes.scale.needsUpdate = true;
+  }
+
   
   // Actualizar posición de la cámara para seguir al personaje en tercera persona
   const horizontalDistance = Math.cos(cameraPitch) * cameraDistance;
