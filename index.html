@@ -1683,8 +1683,8 @@
       const cameraRotationAcceleration = 0.001;
       const cameraRotationDeceleration = 0.005;
       const cameraPitchSpeed = 0.01;
-const minPitch = -Math.PI/3; // Permite mirar más hacia abajo (60 grados)
-const maxPitch = Math.PI/2; 
+  const minPitch = -Math.PI/3; // Permite mirar más hacia abajo (60 grados)
+  const maxPitch = Math.PI/2; 
 
       function moverPersonaje() {
         const now = Date.now();
@@ -1801,32 +1801,31 @@ const maxPitch = Math.PI/2;
       });
 
       // Animación
-      function animar() {
-        requestAnimationFrame(animar);
-        moverPersonaje();
-        
-        // Actualizar posición de la cámara para seguir al personaje en tercera persona
-        const horizontalDistance = Math.cos(cameraPitch) * cameraDistance;
-        const verticalDistance = Math.sin(cameraPitch) * cameraDistance;
-        
-        camera.position.x = personaje.position.x + Math.sin(cameraAngle) * horizontalDistance;
-        camera.position.y = personaje.position.y + cameraHeight + verticalDistance;
-        camera.position.z = personaje.position.z + Math.cos(cameraAngle) * horizontalDistance;
-        
-        // Hacer que la cámara mire al personaje
-        camera.lookAt(personaje.position);
-        
-        // Actualizar posición de la linterna
-        flashlight.position.set(personaje.position.x, personaje.position.y + 1.5, personaje.position.z);
-        flashlight.target.position.set(
-          personaje.position.x + Math.sin(cameraAngle) * 5,
-          personaje.position.y,
-          personaje.position.z + Math.cos(cameraAngle) * 5
-        );
-        
-        renderer.render(scene, camera);
-      }
-
+// En la función animar(), actualizar la linterna correctamente:
+function animar() {
+  requestAnimationFrame(animar);
+  moverPersonaje();
+  
+  // Actualizar posición de la cámara para seguir al personaje en tercera persona
+  const horizontalDistance = Math.cos(cameraPitch) * cameraDistance;
+  const verticalDistance = Math.sin(cameraPitch) * cameraDistance;
+  
+  camera.position.x = personaje.position.x + Math.sin(cameraAngle) * horizontalDistance;
+  camera.position.y = personaje.position.y + cameraHeight + verticalDistance;
+  camera.position.z = personaje.position.z + Math.cos(cameraAngle) * horizontalDistance;
+  
+  // Hacer que la cámara mire al personaje
+  camera.lookAt(personaje.position);
+  
+  // Actualizar posición de la linterna (CORREGIDO)
+  flashlight.position.set(personaje.position.x, personaje.position.y + 1.5, personaje.position.z);
+  // La linterna debe apuntar en la misma dirección que la cámara
+  const lookAtX = personaje.position.x - Math.sin(cameraAngle) * 5;
+  const lookAtZ = personaje.position.z - Math.cos(cameraAngle) * 5;
+  flashlight.target.position.set(lookAtX, personaje.position.y, lookAtZ);
+  
+  renderer.render(scene, camera);
+}
       animar();
 
       // Manejar cambios de orientación y redimensionamiento
@@ -1838,6 +1837,4 @@ const maxPitch = Math.PI/2;
 </body>
 </html>
 
-      
-</body>
-</html>
+ 
