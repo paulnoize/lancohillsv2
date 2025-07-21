@@ -1663,175 +1663,173 @@
       scene.add(crearPileta());
 
       // --- Movimiento personaje ---
-      let input = { 
-        izquierda: false, 
-        derecha: false, 
-        adelante: false, 
-        atras: false, 
-        accion: false,
-        camaraIzq: false,
-        camaraDer: false,
-        camaraArriba: false,
-        camaraAbajo: false,
-        linterna: false
-      };
-      const velocidad = 0.1;
-      let cameraRotationSpeed = 0;
-      const maxCameraRotationSpeed = 0.05;
-      const cameraRotationAcceleration = 0.001;
-      const cameraRotationDeceleration = 0.005;
-      const cameraPitchSpeed = 0.01;
-      const minPitch = 0.1;
-      const maxPitch = 6;
+// --- Movimiento personaje ---
+let input = { 
+  izquierda: false, 
+  derecha: false, 
+  adelante: false, 
+  atras: false, 
+  accion: false,
+  camaraIzq: false,
+  camaraDer: false,
+  camaraArriba: false,
+  camaraAbajo: false,
+  linterna: false
+};
+const velocidad = 0.1;
+let cameraRotationSpeed = 0;
+const maxCameraRotationSpeed = 0.05;
+const cameraRotationAcceleration = 0.001;
+const cameraRotationDeceleration = 0.005;
+const cameraPitchSpeed = 0.01;
+const minPitch = 0.1;
+const maxPitch = 6;
 
-      function moverPersonaje() {
-        const now = Date.now();
-        
-        // Movimiento relativo a la dirección de la cámara
-        const forwardX = Math.sin(cameraAngle);
-        const forwardZ = Math.cos(cameraAngle);
-        
-        if (input.adelante) {
-          personaje.position.x += forwardX * velocidad;
-          personaje.position.z += forwardZ * velocidad;
-          if (now - lastMoveSoundTime > moveSoundCooldown) {
-            soundGenerator.playMove();
-            lastMoveSoundTime = now;
-          }
-        }
-        if (input.atras) {
-          personaje.position.x -= forwardX * velocidad;
-          personaje.position.z -= forwardZ * velocidad;
-          if (now - lastMoveSoundTime > moveSoundCooldown) {
-            soundGenerator.playMove();
-            lastMoveSoundTime = now;
-          }
-        }
-        if (input.izquierda) {
-          personaje.position.x -= forwardZ * velocidad;
-          personaje.position.z += forwardX * velocidad;
-          if (now - lastMoveSoundTime > moveSoundCooldown) {
-            soundGenerator.playMove();
-            lastMoveSoundTime = now;
-          }
-        }
-        if (input.derecha) {
-          personaje.position.x += forwardZ * velocidad;
-          personaje.position.z -= forwardX * velocidad;
-          if (now - lastMoveSoundTime > moveSoundCooldown) {
-            soundGenerator.playMove();
-            lastMoveSoundTime = now;
-          }
-        }
-        if (input.accion) {
-          soundGenerator.playAction();
-          console.log("Acción A");
-        }
-        
-        // Rotación de cámara horizontal con aceleración/suavizado
-        if (input.camaraIzq) {
-          cameraRotationSpeed = Math.min(cameraRotationSpeed + cameraRotationAcceleration, maxCameraRotationSpeed);
-        } else if (input.camaraDer) {
-          cameraRotationSpeed = Math.max(cameraRotationSpeed - cameraRotationAcceleration, -maxCameraRotationSpeed);
-        } else {
-          // Deceleración cuando no hay input
-          if (cameraRotationSpeed > 0) {
-            cameraRotationSpeed = Math.max(0, cameraRotationSpeed - cameraRotationDeceleration);
-          } else if (cameraRotationSpeed < 0) {
-            cameraRotationSpeed = Math.min(0, cameraRotationSpeed + cameraRotationDeceleration);
-          }
-        }
-        
-        cameraAngle += cameraRotationSpeed;
-        
-        // Rotación de cámara vertical
-        if (input.camaraArriba) {
-          cameraPitch = Math.min(cameraPitch + cameraPitchSpeed, maxPitch);
-        }
-        if (input.camaraAbajo) {
-          cameraPitch = Math.max(cameraPitch - cameraPitchSpeed, minPitch);
-        }
-        
-        // Linterna
-        if (input.linterna) {
-          flashlightEnabled = !flashlightEnabled;
-          input.linterna = false; // Para que no siga alternando
-          flashlight.intensity = flashlightEnabled ? 1 : 0;
-        }
-      }
+// Ángulo inicial de la cámara (ajustado para mirar correctamente)
+let cameraAngle = Math.PI; // 180 grados (mirando hacia -Z)
 
-      // Controles
-      ['izquierda', 'derecha', 'adelante', 'atras', 'accion', 'camara-izq', 'camara-der', 'camara-arriba', 'camara-abajo', 'linterna'].forEach(b => {
-        const id = b === 'camara-izq' ? 'camaraIzq' : 
-                  b === 'camara-der' ? 'camaraDer' :
-                  b === 'camara-arriba' ? 'camaraArriba' :
-                  b === 'camara-abajo' ? 'camaraAbajo' : b;
-        
-        document.getElementById(b).addEventListener('touchstart', () => input[id] = true);
-        document.getElementById(b).addEventListener('touchend', () => input[id] = false);
-        document.getElementById(b).addEventListener('touchcancel', () => input[id] = false);
-      });
-
-      window.addEventListener('keydown', e => {
-        if (e.key === 'ArrowUp') input.adelante = true;
-        if (e.key === 'ArrowDown') input.atras = true;
-        if (e.key === 'ArrowLeft') input.izquierda = true;
-        if (e.key === 'ArrowRight') input.derecha = true;
-        if (e.key.toLowerCase() === 'e') input.accion = true;
-        if (e.key === 'a') input.camaraIzq = true;
-        if (e.key === 'd') input.camaraDer = true;
-        if (e.key === 'w') input.camaraArriba = true;
-        if (e.key === 's') input.camaraAbajo = true;
-        if (e.key.toLowerCase() === 'r') input.linterna = true;
-      });
-
-      window.addEventListener('keyup', e => {
-        if (e.key === 'ArrowUp') input.adelante = false;
-        if (e.key === 'ArrowDown') input.atras = false;
-        if (e.key === 'ArrowLeft') input.izquierda = false;
-        if (e.key === 'ArrowRight') input.derecha = false;
-        if (e.key.toLowerCase() === 'e') input.accion = false;
-        if (e.key === 'a') input.camaraIzq = false;
-        if (e.key === 'd') input.camaraDer = false;
-        if (e.key === 'w') input.camaraArriba = false;
-        if (e.key === 's') input.camaraAbajo = false;
-        if (e.key.toLowerCase() === 'r') input.linterna = false;
-      });
-
-      // Animación
-      function animar() {
-        requestAnimationFrame(animar);
-        moverPersonaje();
-        
-        // Actualizar posición de la cámara para seguir al personaje en tercera persona
-        const horizontalDistance = Math.cos(cameraPitch) * cameraDistance;
-        const verticalDistance = Math.sin(cameraPitch) * cameraDistance;
-        
-        camera.position.x = personaje.position.x + Math.sin(cameraAngle) * horizontalDistance;
-        camera.position.y = personaje.position.y + cameraHeight + verticalDistance;
-        camera.position.z = personaje.position.z + Math.cos(cameraAngle) * horizontalDistance;
-        
-        // Hacer que la cámara mire al personaje
-        camera.lookAt(personaje.position);
-        
-        // Actualizar posición de la linterna
-        flashlight.position.set(personaje.position.x, personaje.position.y + 1.5, personaje.position.z);
-        flashlight.target.position.set(
-          personaje.position.x + Math.sin(cameraAngle) * 5,
-          personaje.position.y,
-          personaje.position.z + Math.cos(cameraAngle) * 5
-        );
-        
-        renderer.render(scene, camera);
-      }
-
-      animar();
-
-      // Manejar cambios de orientación y redimensionamiento
-      window.addEventListener('resize', handleOrientationChange);
-      window.addEventListener('orientationchange', handleOrientationChange);
-      handleOrientationChange();
+function moverPersonaje() {
+  const now = Date.now();
+  
+  // Movimiento relativo a la dirección de la cámara (CORREGIDO)
+  const forwardX = -Math.sin(cameraAngle); // Signo invertido
+  const forwardZ = -Math.cos(cameraAngle); // Signo invertido
+  
+  if (input.adelante) {
+    personaje.position.x += forwardX * velocidad;
+    personaje.position.z += forwardZ * velocidad;
+    if (now - lastMoveSoundTime > moveSoundCooldown) {
+      soundGenerator.playMove();
+      lastMoveSoundTime = now;
     }
+  }
+  if (input.atras) {
+    personaje.position.x -= forwardX * velocidad;
+    personaje.position.z -= forwardZ * velocidad;
+    if (now - lastMoveSoundTime > moveSoundCooldown) {
+      soundGenerator.playMove();
+      lastMoveSoundTime = now;
+    }
+  }
+  if (input.izquierda) {
+    personaje.position.x -= forwardZ * velocidad;
+    personaje.position.z += forwardX * velocidad;
+    if (now - lastMoveSoundTime > moveSoundCooldown) {
+      soundGenerator.playMove();
+      lastMoveSoundTime = now;
+    }
+  }
+  if (input.derecha) {
+    personaje.position.x += forwardZ * velocidad;
+    personaje.position.z -= forwardX * velocidad;
+    if (now - lastMoveSoundTime > moveSoundCooldown) {
+      soundGenerator.playMove();
+      lastMoveSoundTime = now;
+    }
+  }
+  if (input.accion) {
+    soundGenerator.playAction();
+    console.log("Acción A");
+  }
+  
+  // Rotación de cámara horizontal con aceleración/suavizado
+  if (input.camaraIzq) {
+    cameraRotationSpeed = Math.min(cameraRotationSpeed + cameraRotationAcceleration, maxCameraRotationSpeed);
+  } else if (input.camaraDer) {
+    cameraRotationSpeed = Math.max(cameraRotationSpeed - cameraRotationAcceleration, -maxCameraRotationSpeed);
+  } else {
+    // Deceleración cuando no hay input
+    if (cameraRotationSpeed > 0) {
+      cameraRotationSpeed = Math.max(0, cameraRotationSpeed - cameraRotationDeceleration);
+    } else if (cameraRotationSpeed < 0) {
+      cameraRotationSpeed = Math.min(0, cameraRotationSpeed + cameraRotationDeceleration);
+    }
+  }
+  
+  cameraAngle += cameraRotationSpeed;
+  
+  // Rotación de cámara vertical
+  if (input.camaraArriba) {
+    cameraPitch = Math.min(cameraPitch + cameraPitchSpeed, maxPitch);
+  }
+  if (input.camaraAbajo) {
+    cameraPitch = Math.max(cameraPitch - cameraPitchSpeed, minPitch);
+  }
+  
+  // Linterna
+  if (input.linterna) {
+    flashlightEnabled = !flashlightEnabled;
+    input.linterna = false;
+    flashlight.intensity = flashlightEnabled ? 1 : 0;
+  }
+}
+
+// Animación corregida
+function animar() {
+  requestAnimationFrame(animar);
+  moverPersonaje();
+  
+  // Actualizar posición de la cámara (CORREGIDO)
+  const horizontalDistance = Math.cos(cameraPitch) * cameraDistance;
+  const verticalDistance = Math.sin(cameraPitch) * cameraDistance;
+  
+  camera.position.x = personaje.position.x - Math.sin(cameraAngle) * horizontalDistance; // Signo invertido
+  camera.position.y = personaje.position.y + cameraHeight + verticalDistance;
+  camera.position.z = personaje.position.z - Math.cos(cameraAngle) * horizontalDistance; // Signo invertido
+  
+  // Hacer que la cámara mire al personaje
+  camera.lookAt(personaje.position);
+  
+  // Actualizar posición de la linterna (CORREGIDO)
+  flashlight.position.set(personaje.position.x, personaje.position.y + 1.5, personaje.position.z);
+  flashlight.target.position.set(
+    personaje.position.x - Math.sin(cameraAngle) * 5, // Signo invertido
+    personaje.position.y + Math.sin(cameraPitch) * 3, // Añadido componente vertical
+    personaje.position.z - Math.cos(cameraAngle) * 5  // Signo invertido
+  );
+  
+  renderer.render(scene, camera);
+}
+
+// Controles (se mantienen igual)
+['izquierda', 'derecha', 'adelante', 'atras', 'accion', 'camara-izq', 'camara-der', 'camara-arriba', 'camara-abajo', 'linterna'].forEach(b => {
+  const id = b === 'camara-izq' ? 'camaraIzq' : 
+            b === 'camara-der' ? 'camaraDer' :
+            b === 'camara-arriba' ? 'camaraArriba' :
+            b === 'camara-abajo' ? 'camaraAbajo' : b;
+  
+  document.getElementById(b).addEventListener('touchstart', () => input[id] = true);
+  document.getElementById(b).addEventListener('touchend', () => input[id] = false);
+  document.getElementById(b).addEventListener('touchcancel', () => input[id] = false);
+});
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp') input.adelante = true;
+  if (e.key === 'ArrowDown') input.atras = true;
+  if (e.key === 'ArrowLeft') input.izquierda = true;
+  if (e.key === 'ArrowRight') input.derecha = true;
+  if (e.key.toLowerCase() === 'e') input.accion = true;
+  if (e.key === 'a') input.camaraIzq = true;
+  if (e.key === 'd') input.camaraDer = true;
+  if (e.key === 'w') input.camaraArriba = true;
+  if (e.key === 's') input.camaraAbajo = true;
+  if (e.key.toLowerCase() === 'r') input.linterna = true;
+});
+
+window.addEventListener('keyup', e => {
+  if (e.key === 'ArrowUp') input.adelante = false;
+  if (e.key === 'ArrowDown') input.atras = false;
+  if (e.key === 'ArrowLeft') input.izquierda = false;
+  if (e.key === 'ArrowRight') input.derecha = false;
+  if (e.key.toLowerCase() === 'e') input.accion = false;
+  if (e.key === 'a') input.camaraIzq = false;
+  if (e.key === 'd') input.camaraDer = false;
+  if (e.key === 'w') input.camaraArriba = false;
+  if (e.key === 's') input.camaraAbajo = false;
+  if (e.key.toLowerCase() === 'r') input.linterna = false;
+});
+
+animar();
   </script>
 </body>
 </html>
