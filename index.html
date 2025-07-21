@@ -1690,8 +1690,8 @@
         const now = Date.now();
         
         // Movimiento relativo a la dirección de la cámara
-        const forwardX = Math.sin(cameraAngle);
-        const forwardZ = Math.cos(cameraAngle);
+  const forwardX = -Math.sin(cameraAngle); // Cambiado el signo
+  const forwardZ = -Math.cos(cameraAngle); // Cambiado el signo
         
         if (input.adelante) {
           personaje.position.x += forwardX * velocidad;
@@ -1730,6 +1730,7 @@
           console.log("Acción A");
         }
         
+        
         // Rotación de cámara horizontal con aceleración/suavizado
         if (input.camaraIzq) {
           cameraRotationSpeed = Math.min(cameraRotationSpeed + cameraRotationAcceleration, maxCameraRotationSpeed);
@@ -1746,6 +1747,7 @@
         
         cameraAngle += cameraRotationSpeed;
         
+  
   // Rotación de cámara vertical
   if (input.camaraArriba) {
     cameraPitch = Math.max(cameraPitch - cameraPitchSpeed, minPitch); // Invertido
