@@ -1746,13 +1746,13 @@
         
         cameraAngle += cameraRotationSpeed;
         
-        // Rotación de cámara vertical
-        if (input.camaraArriba) {
-          cameraPitch = Math.min(cameraPitch + cameraPitchSpeed, maxPitch);
-        }
-        if (input.camaraAbajo) {
-          cameraPitch = Math.max(cameraPitch - cameraPitchSpeed, minPitch);
-        }
+  // Rotación de cámara vertical
+  if (input.camaraArriba) {
+    cameraPitch = Math.max(cameraPitch - cameraPitchSpeed, minPitch); // Invertido
+  }
+  if (input.camaraAbajo) {
+    cameraPitch = Math.min(cameraPitch + cameraPitchSpeed, maxPitch); // Invertido
+  }
         
         // Linterna
         if (input.linterna) {
