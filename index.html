@@ -1170,23 +1170,40 @@
 
       // Cargar mesón
       // Cargar mesón
+      // Cargar mesón
       function cargarOBJDePrueba() {
         const objLoader = new THREE.OBJLoader();
         
         // Usar un modelo OBJ público de prueba
-       objLoader.load(
-  './obj/Humvee.obj',
-  (object) => {
-    console.log("Modelo cargado:", object);
-    // ... resto del código
-  },
-  (xhr) => {
-    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-  },
-  (error) => {
-    console.error('Error:', error);
-  }
-);
+        objLoader.load(
+          './obj/mascada.obj',
+          (object) => {
+            meson = object;
+            meson.position.set(0, -2, -10);
+            meson.scale.set(0.5, 0.5, 0.5);
+            
+            // Aplicar material básico
+            meson.traverse(function(child) {
+              if (child.isMesh) {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0xaaaaaa,
+                  roughness: 0.8,
+                  metalness: 0.2
+                });
+                child.castShadow = true;
+                child.receiveShadow = true;
+              }
+            });
+            
+            scene.add(meson);
+            console.log("Modelo OBJ de prueba cargado correctamente");
+          },
+          undefined,
+          (error) => {
+            console.error('Error al cargar OBJ de prueba:', error);
+            cargarModeloAlternativo(); // Fallback a modelo básico
+          }
+        );
       }
 
 
