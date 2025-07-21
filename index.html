@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Lanco Hill</title>
+<meta charset="UTF-8" />
+<meta name="author" content="Paul Pineda - Chile">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Lanco Hill</title>
+
+
   <style>
       * {
       -webkit-tap-highlight-color: rgba(0,0,0,0);
       -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
-  -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+      -khtml-user-select: none; /* Konqueror HTML */
+      -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+      user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+      -webkit-tap-highlight-color: transparent;
     }
     
     body {
@@ -22,7 +30,36 @@
       overflow: hidden;
       font-family: 'Arial Black', Arial, sans-serif;
       background-color: #000;
+        user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
     }
+
+
+    /* Botón de pantalla completa */
+    .fullscreen-btn {
+      position: fixed;
+    top: 19px;
+    right: 13px;
+      background: rgba(30, 30, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      z-index: 1000;
+      transition: all 0.2s;
+    }
+
+    .fullscreen-btn:hover {
+      background: rgba(70, 70, 70, 0.9);
+    }
+
 
     canvas {
       display: block;
@@ -33,34 +70,6 @@
       left: 0;
     }
 
-    /* Controles mejorados */
-    .controles {
-      position: absolute;
-      bottom: 20px;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 1px 38px;
-      box-sizing: border-box;
-      z-index: 1;
-      pointer-events: none;
-    align-items: center;
-        touch-action: none; /* Desactiva gestos en el área de controles */
-
-    }
-
-    .controles-movimiento, .controles-acciones {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      gap: 0px;
-      pointer-events: auto;
-          justify-items: center;
-    }
-
-    .controles-movimiento {
-      margin-right: 0;
-    }
 
     button {
       padding: 0;
@@ -93,6 +102,38 @@
       background: rgba(70, 70, 70, 0.9);
     }
 
+
+    /* Controles mejorados */
+    .controles {
+      position: absolute;
+      bottom: 18px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 1px 16px;
+      box-sizing: border-box;
+      z-index: 1;
+      pointer-events: none;
+    align-items: flex-end;;
+        touch-action: none; /* Desactiva gestos en el área de controles */
+
+    }
+
+    .controles-movimiento, .controles-acciones {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 0px;
+      pointer-events: auto;
+          justify-items: center;
+    }
+
+    .controles-movimiento {
+      margin-right: 0;
+    }
+
+
+
     /* Posicionamiento específico de los botones */
     #adelante {
       grid-column: 2;
@@ -119,14 +160,15 @@
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(3, 1fr);
       align-items: center;
+      gap: 3px;
     }
 
     #accion {
       grid-column: 1 / span 2;
       grid-row: 1;
       background: rgba(150, 0, 0, 0.7);
-      border-radius: 30px;
-      margin-bottom: 8px;
+      border-radius: 50%;
+      margin-bottom: 2px;
     }
 
     #camara-izq {
@@ -157,8 +199,8 @@
       grid-column: 1 / span 2;
       grid-row: 4;
       background: rgba(150, 150, 0, 0.7);
-      border-radius: 30px;
-      margin-top: 8px;
+      border-radius: 50%;
+      margin-top: 2px;
     }
 
     /* Pantallas */
@@ -580,8 +622,8 @@
       
       .nombre-jugador {
         font-size: 18px;
-        top: 10px;
-        left: 10px;
+        top: 15px;
+        left: 4px;
       }
       
       .color-personaje {
@@ -670,7 +712,7 @@
             <div class="fondo-personaje" style="background: #ff5500;"></div>
             <div class="avatar" style="background: #ff5500;">C</div>
             <div class="info-personaje">
-              <div class="nombre-personaje">CASTOR</div>
+              <div class="nombre-personaje">CRISTOBAL</div>
               <div class="tipo-personaje">El fuerte</div>
             </div>
           </div>
@@ -689,7 +731,7 @@
             <div class="avatar" style="background: #ffff00;">N</div>
             <div class="info-personaje">
               <div class="nombre-personaje">NICO</div>
-              <div class="tipo-personaje">El astuto</div>
+              <div class="tipo-personaje">La astuta</div>
             </div>
           </div>
           
@@ -766,7 +808,8 @@
       </div>
     </div>
   </div>
-  
+  <button class="fullscreen-btn" id="fullscreen-btn" style="display: none;">⛶</button>
+
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/OBJLoader.js"></script>
@@ -803,8 +846,8 @@
         inteligencia: 7
       },
       castror: {
-        nombre: "CASTOR",
-        historia: "Castor es la fuerza bruta del grupo. Sobrevivió a lo imposible gracias a su resistencia sobrehumana. Aunque muchos dicen que ya no es completamente humano después de lo que vivió en Lanco Hill. Su fuerza es la única esperanza contra las criaturas que habitan el pueblo.",
+        nombre: "CRISTOBAL",
+        historia: "Cristobal es la fuerza bruta del grupo. Sobrevivió a lo imposible gracias a su resistencia sobrehumana. Aunque muchos dicen que ya no es completamente humano después de lo que vivió en Lanco Hill. Su fuerza es la única esperanza contra las criaturas que habitan el pueblo.",
         fuerza: 10,
         velocidad: 4,
         inteligencia: 5
@@ -1074,13 +1117,129 @@
       setTimeout(() => {
         document.getElementById('pantalla3').style.display = 'none';
         document.getElementById('pantalla5').style.display = 'block';
-        
+
+        document.getElementById('fullscreen-btn').style.display = 'flex';
+
         // Reproducir música del juego
         music = soundGenerator.playGameMusic();
         
         iniciarJuego();
       }, 1000);
     });
+
+
+
+// Función para alternar pantalla completa
+// Función mejorada para alternar pantalla completa
+function toggleFullscreen() {
+  const doc = document;
+  const docEl = doc.documentElement;
+  
+  // Verificar si ya está en pantalla completa
+  const isFullscreen = doc.fullscreenElement || 
+                     doc.webkitFullscreenElement || 
+                     doc.msFullscreenElement;
+  
+  // Métodos para entrar/salir de pantalla completa
+  const requestFullscreen = docEl.requestFullscreen || 
+                          docEl.webkitRequestFullscreen || 
+                          docEl.msRequestFullscreen;
+  
+  const exitFullscreen = doc.exitFullscreen || 
+                       doc.webkitExitFullscreen || 
+                       doc.msExitFullscreen;
+  
+  if (!isFullscreen) {
+    // Entrar en pantalla completa
+    if (requestFullscreen) {
+      requestFullscreen.call(docEl).catch(err => {
+        console.error("Error al entrar en pantalla completa:", err);
+        
+        // Fallback para iOS
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        } else {
+          
+        }
+      });
+    }
+  } else {
+    // Salir de pantalla completa
+    if (exitFullscreen) {
+      exitFullscreen.call(doc);
+    }
+  }
+}
+
+// Función para forzar pantalla completa al cargar (en móviles)
+function initFullscreen() {
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  if (isMobile) {
+    // Pequeño retraso para permitir interacción del usuario
+    setTimeout(() => {
+      toggleFullscreen();
+      
+      // Intentar bloquear orientación en móviles
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(e => {
+          console.log("No se pudo bloquear orientación:", e);
+        });
+      }
+    }, 1000);
+  }
+}
+
+// Configurar el botón de pantalla completa
+document.addEventListener('DOMContentLoaded', function() {
+  const fullscreenBtn = document.getElementById('fullscreen-btn');
+  
+  if (fullscreenBtn) {
+    // Mostrar el botón solo si el navegador soporta fullscreen
+    fullscreenBtn.style.display = 
+      (document.documentElement.requestFullscreen || 
+       document.documentElement.webkitRequestFullscreen || 
+       document.documentElement.msRequestFullscreen) ? 'flex' : 'none';
+    
+    // Evento click mejorado
+    fullscreenBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleFullscreen();
+    });
+    
+    // Actualizar icono cuando cambia el estado
+    document.addEventListener('fullscreenchange', updateFullscreenButton);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+    document.addEventListener('msfullscreenchange', updateFullscreenButton);
+    
+    function updateFullscreenButton() {
+      const isFullscreen = document.fullscreenElement || 
+                         document.webkitFullscreenElement || 
+                         document.msFullscreenElement;
+      fullscreenBtn.textContent = isFullscreen ? '⛶' : '⛶';
+    }
+  }
+  
+  // Iniciar pantalla completa automática en móviles
+  initFullscreen();
+});
+
+// Prevenir zoom y gestos no deseados
+document.addEventListener('touchstart', function(e) {
+  if (e.touches.length > 1) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+document.addEventListener('gesturestart', function(e) {
+  e.preventDefault();
+});
+
+
+
+
+
+
 
     // Manejar cambios de orientación
     function handleOrientationChange() {
@@ -1146,6 +1305,8 @@
       });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.shadowMap.enabled = true;
+
+
 
       // Luces (más tenebrosas)
       const hemiLight = new THREE.HemisphereLight(0x443333, 0x111122, 0.3);
@@ -1215,6 +1376,10 @@
       personaje.castShadow = true;
       personaje.receiveShadow = true;
       scene.add(personaje);
+
+
+
+
 
       // Cargar mesón
       function cargarOBJDePrueba() {
@@ -1896,6 +2061,7 @@
       handleOrientationChange();
     }
   </script>
+ 
 </body>
 </html>
- 
+</html>
