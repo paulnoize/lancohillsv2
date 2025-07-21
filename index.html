@@ -1690,20 +1690,24 @@
         const now = Date.now();
         
         // Movimiento relativo a la dirección de la cámara
-  const forwardX = -Math.sin(cameraAngle); // Cambiado el signo
-  const forwardZ = -Math.cos(cameraAngle); // Cambiado el signo
+  const forwardX = Math.sin(cameraAngle); // Cambiado el signo
+  const forwardZ = Math.cos(cameraAngle); // Cambiado el signo
         
         if (input.adelante) {
-          personaje.position.x += forwardX * velocidad;
-          personaje.position.z += forwardZ * velocidad;
+          personaje.position.x -= forwardX * velocidad;
+          personaje.position.z -= forwardZ * velocidad;
           if (now - lastMoveSoundTime > moveSoundCooldown) {
             soundGenerator.playMove();
             lastMoveSoundTime = now;
           }
         }
         if (input.atras) {
-          personaje.position.x -= forwardX * velocidad;
-          personaje.position.z -= forwardZ * velocidad;
+
+
+
+          personaje.position.x += forwardX * velocidad;
+          personaje.position.z += forwardZ * velocidad;
+
           if (now - lastMoveSoundTime > moveSoundCooldown) {
             soundGenerator.playMove();
             lastMoveSoundTime = now;
