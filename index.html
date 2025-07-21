@@ -1718,8 +1718,8 @@ function crearEstrellasParpadeantes() {
         const now = Date.now();
         
         // Movimiento relativo a la dirección de la cámara
-  const forwardX = -Math.sin(cameraAngle); // Cambiado el signo
-  const forwardZ = -Math.cos(cameraAngle); // Cambiado el signo
+  const forwardX = Math.sin(cameraAngle); // Cambiado el signo
+  const forwardZ = Math.cos(cameraAngle); // Cambiado el signo
         
         if (input.adelante) {
           personaje.position.x += forwardX * velocidad;
@@ -1831,23 +1831,6 @@ function crearEstrellasParpadeantes() {
       });
 
       // Animación
-// En la función animar(), actualizar la linterna correctamente:
-function animar() {
-  requestAnimationFrame(animar);
-  moverPersonaje();
-
-    time += 0.01;
-  
-  if (stars) {
-    const scales = stars.geometry.attributes.scale.array;
-    
-    for (let i = 0; i < scales.length; i++) {
-      // Parpadeo aleatorio usando función de ruido o seno
-      scales[i] = 0.5 + Math.abs(Math.sin(time + i * 0.1)) * 1.5;
-    }
-    
-    stars.geometry.attributes.scale.needsUpdate = true;
-  }
 
   
   // Actualizar posición de la cámara para seguir al personaje en tercera persona
