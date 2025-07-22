@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
@@ -30,8 +30,7 @@ DOCTYPE html>
       overflow: hidden;
       font-family: 'Arial Black', Arial, sans-serif;
       background-color: #000;
-        user-select: none;
-
+      
     }
 
 
@@ -1954,8 +1953,6 @@ document.addEventListener('gesturestart', function(e) {
           console.log("Acción A");
         }
         
-
-        
         // Rotación de cámara horizontal con aceleración/suavizado
         if (input.camaraIzq) {
           cameraRotationSpeed = Math.min(cameraRotationSpeed + cameraRotationAcceleration, maxCameraRotationSpeed);
@@ -2001,48 +1998,30 @@ document.addEventListener('gesturestart', function(e) {
       });
 
       window.addEventListener('keydown', e => {
-        e.preventDefault(); // Prevenir comportamientos predeterminados
-        
-        const key = e.key.toLowerCase(); // Normalizar a minúsculas
-        
-        if (key === 'arrowup') input.adelante = true;
-        if (key === 'arrowdown') input.atras = true;
-        if (key === 'arrowleft') input.izquierda = true;
-        if (key === 'arrowright') input.derecha = true;
-        if (key === 'e') input.accion = true;
-        if (key === 'a') input.camaraIzq = true;
-        if (key === 'd') input.camaraDer = true;
-        if (key === 'w') input.camaraArriba = true;
-        if (key === 's') input.camaraAbajo = true;
-        if (key === 'r') input.linterna = true;
+        if (e.key === 'ArrowUp') input.adelante = true;
+        if (e.key === 'ArrowDown') input.atras = true;
+        if (e.key === 'ArrowLeft') input.izquierda = true;
+        if (e.key === 'ArrowRight') input.derecha = true;
+        if (e.key.toLowerCase() === 'e') input.accion = true;
+        if (e.key === 'a') input.camaraIzq = true;
+        if (e.key === 'd') input.camaraDer = true;
+        if (e.key === 'w') input.camaraArriba = true;
+        if (e.key === 's') input.camaraAbajo = true;
+        if (e.key.toLowerCase() === 'r') input.linterna = true;
       });
 
       window.addEventListener('keyup', e => {
-        e.preventDefault(); // Prevenir comportamientos predeterminados
-        
-        const key = e.key.toLowerCase(); // Normalizar a minúsculas
-        
-        if (key === 'arrowup') input.adelante = false;
-        if (key === 'arrowdown') input.atras = false;
-        if (key === 'arrowleft') input.izquierda = false;
-        if (key === 'arrowright') input.derecha = false;
-        if (key === 'e') input.accion = false;
-        if (key === 'a') input.camaraIzq = false;
-        if (key === 'd') input.camaraDer = false;
-        if (key === 'w') input.camaraArriba = false;
-        if (key === 's') input.camaraAbajo = false;
-        if (key === 'r') input.linterna = false;
+        if (e.key === 'ArrowUp') input.adelante = false;
+        if (e.key === 'ArrowDown') input.atras = false;
+        if (e.key === 'ArrowLeft') input.izquierda = false;
+        if (e.key === 'ArrowRight') input.derecha = false;
+        if (e.key.toLowerCase() === 'e') input.accion = false;
+        if (e.key === 'a') input.camaraIzq = false;
+        if (e.key === 'd') input.camaraDer = false;
+        if (e.key === 'w') input.camaraArriba = false;
+        if (e.key === 's') input.camaraAbajo = false;
+        if (e.key.toLowerCase() === 'r') input.linterna = false;
       });
-
-
-      // Asegurarse de que el canvas tenga el foco
-      document.getElementById('juego').addEventListener('click', function() {
-        this.focus();
-      });
-
-      // Agregar atributo tabindex al canvas para que pueda recibir foco
-      document.getElementById('juego').setAttribute('tabindex', '0');
-
 
       // Animación
       function animar() {
