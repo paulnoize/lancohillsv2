@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
@@ -1955,13 +1955,7 @@ document.addEventListener('gesturestart', function(e) {
         }
         
 
-        // Agregar esto al moverPersonaje()
-        if (input.camaraIzq || input.camaraDer || input.camaraArriba || input.camaraAbajo) {
-          console.log("Controles de cámara activos:", input);
-        }
-
-
-
+        
         // Rotación de cámara horizontal con aceleración/suavizado
         if (input.camaraIzq) {
           cameraRotationSpeed = Math.min(cameraRotationSpeed + cameraRotationAcceleration, maxCameraRotationSpeed);
@@ -2087,4 +2081,3 @@ document.addEventListener('gesturestart', function(e) {
 
 </body>
 </html>
-
