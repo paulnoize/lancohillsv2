@@ -810,6 +810,10 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/OBJLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/MTLLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.162.0/examples/js/loaders/IESLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.162.0/examples/js/lights/IESSpotLight.js"></script>
+
+
   <script>
     // Variables globales
     let personajeSeleccionado = null;
@@ -1044,6 +1048,9 @@
         return { osc1, osc2, gain1, gain2 };
       }
     }
+
+
+
 
     const soundGenerator = new SoundGenerator();
     let music = null;
@@ -1283,6 +1290,18 @@ document.addEventListener('gesturestart', function(e) {
       return starField;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
     // Función principal del juego
     function iniciarJuego() {
       // Escena y cámara
@@ -1372,6 +1391,449 @@ document.addEventListener('gesturestart', function(e) {
       personaje.castShadow = true;
       personaje.receiveShadow = true;
       scene.add(personaje);
+
+
+
+
+
+
+
+function crearLetreroCyberpunk() {
+    const grupo = new THREE.Group();
+    const posicionZ = -70;
+
+    // 1. Esfera central futurista
+    const esfera = new THREE.Mesh(
+        new THREE.SphereGeometry(4, 64, 64),
+        new THREE.MeshPhysicalMaterial({
+            color: 0x000000,
+            metalness: 0.9,
+            roughness: 0.1,
+            clearcoat: 1,
+            transparent: true,
+            opacity: 0.2,
+            envMapIntensity: 2
+        })
+    );
+    esfera.position.set(0, 3, posicionZ);
+    grupo.add(esfera);
+
+    // 2. Texto "SKELETON.CL" en anillo neón rojo
+    const crearTextoAnillo = () => {
+        const radio = 6;
+        const textoGroup = new THREE.Group();
+        textoGroup.position.set(0, 3, posicionZ);
+
+        // Configuración del texto (Canvas para alta calidad)
+        const canvas = document.createElement('canvas');
+        canvas.width = 4096; // Resolución ultra para texto claro
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+
+        // Fondo transparente
+        ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Estilo cyberpunk (rojo neón con resplandor)
+        ctx.font = 'Bold 180px "Arial Black"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Efecto de resplandor
+        for (let i = 5; i > 0; i--) {
+            ctx.strokeStyle = `rgba(255, 0, 0, ${i/10})`;
+            ctx.lineWidth = i * 4;
+            ctx.strokeText('SKELETON.CL', canvas.width/2, canvas.height/2);
+        }
+
+        // Texto principal
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, '#ff0000');
+        gradient.addColorStop(0.5, '#ffffff');
+        gradient.addColorStop(1, '#ff0000');
+        ctx.fillStyle = gradient;
+        ctx.fillText('SKELETON.CL', canvas.width/2, canvas.height/2);
+
+        const textura = new THREE.CanvasTexture(canvas);
+        textura.anisotropy = 16;
+
+        // Crear anillo de texto (TubeGeometry para grosor)
+        const curva = new THREE.EllipseCurve(
+            1, 0, radio, radio * 1, 0, Math.PI * 1, false, 0
+        );
+        const puntos = curva.getPoints(64);
+        const path = new THREE.CatmullRomCurve3(
+            puntos.map(p => new THREE.Vector3(p.x, p.y, 0))
+        );
+
+        const geometria = new THREE.TubeGeometry(path, 64, 0.5, 32, false);
+        const material = new THREE.MeshBasicMaterial({
+            map: textura,
+            transparent: true,
+            side: THREE.DoubleSide,
+            blending: THREE.AdditiveBlending
+        });
+
+        const textoAnillo = new THREE.Mesh(geometria, material);
+        textoAnillo.rotation.x = Math.PI /6; // Rotar para que quede horizontal
+        textoGroup.add(textoAnillo);
+
+        return textoGroup;
+    };
+
+    const textoAnillo = crearTextoAnillo();
+    grupo.add(textoAnillo);
+
+    // 3. Luces direccionales (4 faroles cyberpunk)
+    const coloresLuces = [0xff0000, 0x00ff00, 0x0000ff, 0xff00ff];
+    const radioLuces = 8;
+    for (let i = 0; i < 4; i++) {
+        const angle = (i / 4) * Math.PI * 2;
+        const x = Math.cos(angle) * radioLuces;
+        const z = Math.sin(angle) * radioLuces + posicionZ;
+
+        const luz = new THREE.SpotLight(
+            coloresLuces[i],
+            10,
+            30,
+            Math.PI/6,
+            0.5,
+            1
+        );
+        luz.position.set(x, 10, z);
+        luz.target.position.set(0, 3, posicionZ);
+        grupo.add(luz, luz.target);
+    }
+
+    // 4. Animación
+    grupo.userData = {
+        actualizar: (delta) => {
+            // Rotación continua del texto
+            textoAnillo.rotation.y += 0.02;
+
+            // Levitación sutil de la esfera
+            esfera.position.y = 3 + Math.sin(performance.now() * 0.001) * 0.3;
+        }
+    };
+
+    return grupo;
+}
+
+// Uso:
+const letrero = crearLetreroCyberpunk();
+scene.add(letrero);
+
+
+
+
+
+
+
+// Agrega esto en iniciarJuego(), después de crear la escena
+function crearSantuarioSkeleton() {
+    const grupo = new THREE.Group();
+    const posicionZ = -70;
+    
+    // Configuración mejorada de luces (más intensas)
+    const coloresLuces = [
+        { color: 0xff0000, intensidad: 3 }, // Rojo
+        { color: 0x00ff00, intensidad: 3 }, // Verde
+        { color: 0x0066ff, intensidad: 3 }, // Azul
+        { color: 0xaa00ff, intensidad: 3 }  // Morado
+    ];
+    
+    // Posiciones de los postes de luz
+    const radio = 6;
+    const posiciones = [
+        { x: -radio, z: posicionZ - radio },
+        { x: radio, z: posicionZ - radio },
+        { x: radio, z: posicionZ + radio },
+        { x: -radio, z: posicionZ + radio }
+    ];
+    
+    // --- POSTES DE LUZ MEJORADOS (con lámparas) ---
+    posiciones.forEach((pos, index) => {
+        // Base del poste (más realista)
+        const posteGeom = new THREE.CylinderGeometry(0.3, 0.4, 12, 12);
+        const posteMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x333333,
+            roughness: 0.7,
+            metalness: 0.5
+        });
+        const poste = new THREE.Mesh(posteGeom, posteMaterial);
+        poste.position.set(pos.x, 6, pos.z);
+        poste.castShadow = true;
+        grupo.add(poste);
+        
+        // Cabeza de la lámpara (tipo farola)
+        const lamparaGeom = new THREE.BoxGeometry(1.5, 0.5, 1.5);
+        const lamparaMaterial = new THREE.MeshStandardMaterial({
+            color: 0x888888,
+            emissive: 0x222222,
+            emissiveIntensity: 0.5,
+            metalness: 0.8
+        });
+        const lampara = new THREE.Mesh(lamparaGeom, lamparaMaterial);
+        lampara.position.set(pos.x, 12, pos.z);
+        lampara.castShadow = true;
+        grupo.add(lampara);
+        
+        // Luz principal (spotlight potente)
+        const luz = new THREE.SpotLight(
+            coloresLuces[index].color, 
+            coloresLuces[index].intensidad, 
+            40, 
+            Math.PI/5, 
+            0.5, 
+            1
+        );
+        luz.position.set(pos.x, 11.5, pos.z);
+        luz.target.position.set(0, 3, posicionZ);
+        luz.castShadow = true;
+        luz.shadow.mapSize.width = 2048;
+        luz.shadow.mapSize.height = 2048;
+        luz.shadow.bias = -0.001;
+        
+        // Efecto de luz visible (volumétrica)
+        const conoLuzGeom = new THREE.ConeGeometry(2, 5, 32);
+        const conoLuzMaterial = new THREE.MeshPhongMaterial({
+            color: coloresLuces[index].color,
+            transparent: true,
+            opacity: 0.15,
+            side: THREE.DoubleSide,
+            blending: THREE.AdditiveBlending
+        });
+        const conoLuz = new THREE.Mesh(conoLuzGeom, conoLuzMaterial);
+        conoLuz.position.set(pos.x, 11, pos.z);
+        conoLuz.rotation.x = Math.PI / 2;
+        conoLuz.lookAt(0, 3, posicionZ);
+        grupo.add(conoLuz);
+        
+        grupo.add(luz);
+        grupo.add(luz.target);
+        
+        // Guardar datos para animación
+        luz.userData = {
+            originalPos: { x: pos.x, z: pos.z },
+            time: Math.random() * 100,
+            speed: 0.2 + Math.random() * 0.3
+        };
+    });
+    
+    // --- ESFERA FLOTANTE CENTRAL ---
+    const esferaGeom = new THREE.SphereGeometry(3.5, 64, 64);
+    const esferaMaterial = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.25,
+        specular: 0xffffff,
+        shininess: 100,
+        emissive: 0x111111,
+        emissiveIntensity: 0.3,
+        side: THREE.DoubleSide
+    });
+    const esfera = new THREE.Mesh(esferaGeom, esferaMaterial);
+    esfera.position.set(0, 3, posicionZ);
+    esfera.castShadow = true;
+    esfera.receiveShadow = true;
+    
+    // Animación de levitación
+    esfera.userData = {
+        time: Math.random() * 100,
+        speed: 0.5
+    };
+    grupo.add(esfera);
+    
+    // --- TEXTO "SKELETON.CL" MEJORADO (visible y con estilo cyberpunk) ---
+    const crearTextoCircular = () => {
+        const textoGroup = new THREE.Group();
+        textoGroup.position.set(0, 3, posicionZ);
+        
+        // Opción 1: Texto 3D (más impactante)
+        const fontLoader = new THREE.FontLoader();
+        // Nota: Necesitas cargar una fuente (como helvetiker de Three.js examples)
+        fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
+            const textoGeom = new THREE.TextGeometry('SKELETON.CL', {
+                font: font,
+                size: 0.8,
+                height: 0.2,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 0.05,
+                bevelSize: 0.05,
+                bevelOffset: 0,
+                bevelSegments: 5
+            });
+            
+            const textoMaterial = new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                emissive: 0x00ffff,
+                emissiveIntensity: 0.5,
+                specular: 0xffffff,
+                shininess: 100,
+                transparent: true,
+                opacity: 0.9
+            });
+            
+            const textoMesh = new THREE.Mesh(textoGeom, textoMaterial);
+            textoMesh.geometry.center();
+            
+            // Crear anillo de texto (rotando alrededor de la esfera)
+            const radioTexto = 5;
+            const segmentos = 8; // 8 letras en "SKELETON"
+            
+            for (let i = 0; i < segmentos; i++) {
+                const angle = (i / segmentos) * Math.PI * 2;
+                const letra = textoMesh.clone();
+                letra.position.set(
+                    Math.cos(angle) * radioTexto,
+                    0,
+                    Math.sin(angle) * radioTexto
+                );
+                letra.rotation.y = -angle;
+                letra.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+                textoGroup.add(letra);
+            }
+        });
+        
+        // Opción 2: Texto en canvas (alternativa si no hay fuentes 3D)
+        const canvas = document.createElement('canvas');
+        canvas.width = 2048;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        
+        // Fondo transparente
+        ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Texto con efecto neón cyberpunk
+        ctx.font = 'Bold 120px Arial';
+        ctx.textAlign = 'center';
+        
+        // Efecto de resplandor
+        for(let i = 8; i > 0; i--) {
+            ctx.strokeStyle = `rgba(0, 255, 255, ${i/15})`;
+            ctx.lineWidth = i * 2;
+            ctx.strokeText('SKELETON.CL', canvas.width/2, canvas.height/2 + 150);
+        }
+        
+        // Texto principal
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, '#00ffff');
+        gradient.addColorStop(0.5, '#ffffff');
+        gradient.addColorStop(1, '#00ffff');
+        ctx.fillStyle = gradient;
+        ctx.fillText('SKELETON.CL', canvas.width/2, canvas.height/2 + 150);
+        
+        const textura = new THREE.CanvasTexture(canvas);
+        textura.anisotropy = 16;
+        
+        // Crear anillo de texto
+        const segmentos = 64;
+        const radioTexto = 4.8;
+        const puntos = [];
+        const uvs = [];
+        
+        for (let i = 0; i <= segmentos; i++) {
+            const angle = (i / segmentos) * Math.PI * 2;
+            puntos.push(new THREE.Vector3(
+                Math.cos(angle) * radioTexto,
+                Math.sin(angle) * radioTexto,
+                0
+            ));
+            uvs.push(i / segmentos, 0.5);
+        }
+        
+        const textoGeom = new THREE.BufferGeometry().setFromPoints(puntos);
+        textoGeom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+        
+        const textoMaterial = new THREE.MeshBasicMaterial({
+            map: textura,
+            transparent: true,
+            side: THREE.DoubleSide,
+            blending: THREE.AdditiveBlending,
+            opacity: 0.9
+        });
+        
+        const textoAnillo = new THREE.Line(textoGeom, textoMaterial);
+        textoAnillo.rotation.x = Math.PI / 2;
+        textoGroup.add(textoAnillo);
+        
+        // Añadir efecto de partículas para más impacto
+        const particulasGeom = new THREE.BufferGeometry();
+        const particulasCount = 200;
+        const posArray = new Float32Array(particulasCount * 3);
+        
+        for(let i = 0; i < particulasCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 10;
+        }
+        
+        particulasGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particulasMaterial = new THREE.PointsMaterial({
+            color: 0x00ffff,
+            size: 0.1,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+        
+        const particulasMesh = new THREE.Points(particulasGeom, particulasMaterial);
+        textoGroup.add(particulasMesh);
+        
+        // Animación
+        textoGroup.userData = {
+            velocidadRotacion: 0.02,
+            tiempo: 0
+        };
+        
+        return textoGroup;
+    };
+    
+    const textoCircular = crearTextoCircular();
+    grupo.add(textoCircular);
+    
+    // --- ANIMACIONES ---
+    grupo.userData = {
+        actualizar: function(delta) {
+            // Animar luces (movimiento sutil)
+            grupo.children.forEach(child => {
+                if (child instanceof THREE.SpotLight && child.userData) {
+                    child.userData.time += child.userData.speed * delta;
+                    child.position.x = child.userData.originalPos.x + Math.sin(child.userData.time) * 0.8;
+                    child.position.z = child.userData.originalPos.z + Math.cos(child.userData.time * 0.7) * 0.8;
+                    child.target.position.set(0, 3, posicionZ);
+                }
+            });
+            
+            // Animar esfera (levitación)
+            if (esfera) {
+                esfera.userData.time += esfera.userData.speed * delta;
+                esfera.position.y = 3 + Math.sin(esfera.userData.time) * 0.3;
+            }
+            
+            // Animar texto
+            if (textoCircular) {
+                textoCircular.rotation.y += textoCircular.userData.velocidadRotacion;
+                textoCircular.userData.tiempo += delta;
+                
+                // Efecto de parpadeo neón
+                if (textoCircular.children[0]?.material) {
+                    const intensidad = 0.8 + Math.sin(textoCircular.userData.tiempo * 5) * 0.2;
+                    textoCircular.children[0].material.opacity = intensidad;
+                }
+            }
+        }
+    };
+    
+    return grupo;
+}
+
+// Crear y añadir a la escena
+const efectoLuces = crearSantuarioSkeleton();
+scene.add(efectoLuces);
+
+
+
 
 
 
@@ -1475,6 +1937,12 @@ document.addEventListener('gesturestart', function(e) {
 
       cargarOBJDePrueba();
       cargarOBJDePruebaH();
+
+
+
+
+
+
 
       // --- LETRERO ---
       function crearLetrero() {
@@ -1853,7 +2321,7 @@ document.addEventListener('gesturestart', function(e) {
             roughness: 0.7
           })
         );
-        base.position.set(-10, 0.25, 10);
+        base.position.set(-7, 0.25, 10);
         grupo.add(base);
 
         // Agua
@@ -1867,7 +2335,7 @@ document.addEventListener('gesturestart', function(e) {
             metalness: 0.7
           })
         );
-        agua.position.set(-10, 0.45, 10);
+        agua.position.set(-7, 0.45, 10);
         grupo.add(agua);
 
         // Fuente central
@@ -1878,13 +2346,18 @@ document.addEventListener('gesturestart', function(e) {
             metalness: 0.5
           })
         );
-        fuente.position.set(-10, 1, 10);
+        fuente.position.set(-7, 1, 10);
         grupo.add(fuente);
 
         return grupo;
       }
 
       scene.add(crearPileta());
+
+
+
+
+
 
       // --- Movimiento personaje ---
       let input = { 
@@ -2039,6 +2512,7 @@ document.addEventListener('gesturestart', function(e) {
 
       // Animación
       function animar() {
+        letrero.userData.actualizar();
         requestAnimationFrame(animar);
         moverPersonaje();
         
@@ -2060,6 +2534,13 @@ document.addEventListener('gesturestart', function(e) {
         const lookAtZ = personaje.position.z - Math.cos(cameraAngle) * 5;
         flashlight.target.position.set(lookAtX, personaje.position.y, lookAtZ);
         
+
+
+
+      // En la función animar(), agregar esto antes de renderer.render():
+      if (efectoLuces.userData.update) {
+          efectoLuces.userData.update(0.016); // Delta time aproximado
+      }
         renderer.render(scene, camera);
       }
       
@@ -2074,3 +2555,4 @@ document.addEventListener('gesturestart', function(e) {
 
 </body>
 </html>
+
