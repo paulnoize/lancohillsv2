@@ -38,8 +38,8 @@
     /* Botón de pantalla completa */
     .fullscreen-btn {
       position: fixed;
-    top: 19px;
-    right: 13px;
+    top: 11px;
+    right: 7px;
       background: rgba(30, 30, 30, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 50%;
@@ -619,8 +619,8 @@
       
       .nombre-jugador {
         font-size: 18px;
-        top: 15px;
-        left: 4px;
+        top: 25px;
+        left: 12px;
       }
       
       .color-personaje {
@@ -1954,6 +1954,14 @@ document.addEventListener('gesturestart', function(e) {
           console.log("Acción A");
         }
         
+
+        // Agregar esto al moverPersonaje()
+        if (input.camaraIzq || input.camaraDer || input.camaraArriba || input.camaraAbajo) {
+          console.log("Controles de cámara activos:", input);
+        }
+
+
+
         // Rotación de cámara horizontal con aceleración/suavizado
         if (input.camaraIzq) {
           cameraRotationSpeed = Math.min(cameraRotationSpeed + cameraRotationAcceleration, maxCameraRotationSpeed);
@@ -1999,30 +2007,48 @@ document.addEventListener('gesturestart', function(e) {
       });
 
       window.addEventListener('keydown', e => {
-        if (e.key === 'ArrowUp') input.adelante = true;
-        if (e.key === 'ArrowDown') input.atras = true;
-        if (e.key === 'ArrowLeft') input.izquierda = true;
-        if (e.key === 'ArrowRight') input.derecha = true;
-        if (e.key.toLowerCase() === 'e') input.accion = true;
-        if (e.key === 'a') input.camaraIzq = true;
-        if (e.key === 'd') input.camaraDer = true;
-        if (e.key === 'w') input.camaraArriba = true;
-        if (e.key === 's') input.camaraAbajo = true;
-        if (e.key.toLowerCase() === 'r') input.linterna = true;
+        e.preventDefault(); // Prevenir comportamientos predeterminados
+        
+        const key = e.key.toLowerCase(); // Normalizar a minúsculas
+        
+        if (key === 'arrowup') input.adelante = true;
+        if (key === 'arrowdown') input.atras = true;
+        if (key === 'arrowleft') input.izquierda = true;
+        if (key === 'arrowright') input.derecha = true;
+        if (key === 'e') input.accion = true;
+        if (key === 'a') input.camaraIzq = true;
+        if (key === 'd') input.camaraDer = true;
+        if (key === 'w') input.camaraArriba = true;
+        if (key === 's') input.camaraAbajo = true;
+        if (key === 'r') input.linterna = true;
       });
 
       window.addEventListener('keyup', e => {
-        if (e.key === 'ArrowUp') input.adelante = false;
-        if (e.key === 'ArrowDown') input.atras = false;
-        if (e.key === 'ArrowLeft') input.izquierda = false;
-        if (e.key === 'ArrowRight') input.derecha = false;
-        if (e.key.toLowerCase() === 'e') input.accion = false;
-        if (e.key === 'a') input.camaraIzq = false;
-        if (e.key === 'd') input.camaraDer = false;
-        if (e.key === 'w') input.camaraArriba = false;
-        if (e.key === 's') input.camaraAbajo = false;
-        if (e.key.toLowerCase() === 'r') input.linterna = false;
+        e.preventDefault(); // Prevenir comportamientos predeterminados
+        
+        const key = e.key.toLowerCase(); // Normalizar a minúsculas
+        
+        if (key === 'arrowup') input.adelante = false;
+        if (key === 'arrowdown') input.atras = false;
+        if (key === 'arrowleft') input.izquierda = false;
+        if (key === 'arrowright') input.derecha = false;
+        if (key === 'e') input.accion = false;
+        if (key === 'a') input.camaraIzq = false;
+        if (key === 'd') input.camaraDer = false;
+        if (key === 'w') input.camaraArriba = false;
+        if (key === 's') input.camaraAbajo = false;
+        if (key === 'r') input.linterna = false;
       });
+
+
+      // Asegurarse de que el canvas tenga el foco
+      document.getElementById('juego').addEventListener('click', function() {
+        this.focus();
+      });
+
+      // Agregar atributo tabindex al canvas para que pueda recibir foco
+      document.getElementById('juego').setAttribute('tabindex', '0');
+
 
       // Animación
       function animar() {
@@ -2061,3 +2087,4 @@ document.addEventListener('gesturestart', function(e) {
 
 </body>
 </html>
+
