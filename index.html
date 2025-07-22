@@ -30,7 +30,7 @@
       overflow: hidden;
       font-family: 'Arial Black', Arial, sans-serif;
       background-color: #000;
-      
+
     }
 
 
@@ -1997,31 +1997,45 @@ document.addEventListener('gesturestart', function(e) {
         document.getElementById(b).addEventListener('touchcancel', () => input[id] = false);
       });
 
-      window.addEventListener('keydown', e => {
-        if (e.key === 'ArrowUp') input.adelante = true;
-        if (e.key === 'ArrowDown') input.atras = true;
-        if (e.key === 'ArrowLeft') input.izquierda = true;
-        if (e.key === 'ArrowRight') input.derecha = true;
-        if (e.key.toLowerCase() === 'e') input.accion = true;
-        if (e.key === 'a') input.camaraIzq = true;
-        if (e.key === 'd') input.camaraDer = true;
-        if (e.key === 'w') input.camaraArriba = true;
-        if (e.key === 's') input.camaraAbajo = true;
-        if (e.key.toLowerCase() === 'r') input.linterna = true;
-      });
+      // 1. Asegurar que el canvas tenga el foco
+      const canvas = document.getElementById('juego');
+      canvas.setAttribute('tabindex', '0');
+      canvas.style.outline = 'none'; // Eliminar borde feo al enfocar
+      canvas.focus(); // Enfocar automáticamente
 
-      window.addEventListener('keyup', e => {
-        if (e.key === 'ArrowUp') input.adelante = false;
-        if (e.key === 'ArrowDown') input.atras = false;
-        if (e.key === 'ArrowLeft') input.izquierda = false;
-        if (e.key === 'ArrowRight') input.derecha = false;
-        if (e.key.toLowerCase() === 'e') input.accion = false;
-        if (e.key === 'a') input.camaraIzq = false;
-        if (e.key === 'd') input.camaraDer = false;
-        if (e.key === 'w') input.camaraArriba = false;
-        if (e.key === 's') input.camaraAbajo = false;
-        if (e.key.toLowerCase() === 'r') input.linterna = false;
-      });
+      // 2. Control de teclado optimizado para PC
+      function setupKeyboardControls() {
+        const handleKey = (e, isKeyDown) => {
+          // Usar e.code para evitar problemas con distribuciones de teclado
+          switch(e.code) {
+            case 'KeyW': input.camaraArriba = isKeyDown; break;
+            case 'KeyS': input.camaraAbajo = isKeyDown; break;
+            case 'KeyA': input.camaraIzq = isKeyDown; break;
+            case 'KeyD': input.camaraDer = isKeyDown; break;
+            case 'ArrowUp': input.adelante = isKeyDown; break;
+            case 'ArrowDown': input.atras = isKeyDown; break;
+            case 'ArrowLeft': input.izquierda = isKeyDown; break;
+            case 'ArrowRight': input.derecha = isKeyDown; break;
+            case 'KeyE': input.accion = isKeyDown; break;
+            case 'KeyR': input.linterna = isKeyDown; break;
+          }
+          
+          // Prevenir comportamiento predeterminado solo para las teclas que usamos
+          if ([
+            'KeyW', 'KeyS', 'KeyA', 'KeyD', 
+            'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+            'KeyE', 'KeyR'
+          ].includes(e.code)) {
+            e.preventDefault();
+          }
+        };
+
+        window.addEventListener('keydown', (e) => handleKey(e, true));
+        window.addEventListener('keyup', (e) => handleKey(e, false));
+      }
+
+      // 3. Inicializar controles
+      setupKeyboardControls();
 
       // Animación
       function animar() {
